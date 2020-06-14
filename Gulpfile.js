@@ -2,8 +2,10 @@ var gulp = require('gulp');
 var clean = require('gulp-clean');
 var tap = require('gulp-tap');
 var util = require('gulp-util');
+var rename = require("gulp-rename");
 
 var coloredOriginals = [];
+var coloredImg = [];
 
 // Find colorized images and create an array of their originals
 gulp.task('filter', function() {
@@ -15,6 +17,7 @@ gulp.task('filter', function() {
       // If file name contains "IMG_E" pattern (colorized images file name pattern)
       // tweak file name string to corespond to its original file name pattern
       if (fileName.indexOf('IMG_E') > -1) {
+        coloredImg.push(String.raw `${fileName.replace('\\', '/').replace (/^/,'source/')}`);
         coloredOriginals.push(String.raw `${fileName.replace('IMG_E', 'IMG_').replace('\\', '/').replace (/^/,'source/')}`);
       }
     }))
@@ -41,5 +44,30 @@ gulp.task('clean:originals', function() {
     .pipe(gulp.dest('dist'));
 });
 
+// Rename colored images
+gulp.task('rename:colored', function() {
+  return gulp.src(coloredImg, {
+      allowEmpty: true
+    })
+    .pipe(rename(function (path) {
+      // Updates the object in-place
+      path.basename = path.basename.replace('IMG_E', 'IMG_')
+    }))
+    .pipe(gulp.dest("source"));
+});
+
+
+// Remove colored images
+gulp.task('remove:colored', function() {
+  return gulp.src(coloredImg, {
+      allowEmpty: true
+    })
+    .pipe(clean({
+      force: true
+    }))
+    .pipe(gulp.dest('dist'));
+});
+
+
 // Sequance the tasks
-gulp.task('default', gulp.series('clean:aae', 'filter', 'clean:originals'));
+gulp.task('default', gulp.series('clean:aae', 'filter', 'clean:originals', 'rename:colored', 'remove:colored'));

@@ -7,6 +7,10 @@ When you transfer photos from your iphone to Windows machine you may notice that
 - removes the colour filtered photos originals:
   if there are unprocessed `IMG_2602.JPG` and colour filtered `IMG_E2602.JPG`,
   the script will remove unprocessed `IMG_2602.JPG`
+- renames the file name of colored verison to be the same as original version, making chronology of images consistent
+
+In `dist` folder you will find the files that are removed from `source` folder.
+`source` folder will contain images cleaned from `.AAE` files and colored originals
 
 ## Disclaimer
 
